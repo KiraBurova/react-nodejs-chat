@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { StreamChat } from "stream-chat";
 import { Chat } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import ChannelList from "./components/ChannelList";
-import Channel from "./components/Channel";
+import ChannelContainer from "./components/ChannelContainer";
 import Auth from "./components/Auth";
 
 import "./App.css";
+import "stream-chat-react/dist/css/index.css";
 
 const apiKey = import.meta.env.VITE_API_KEY;
 
@@ -30,14 +31,30 @@ if (authToken) {
 }
 
 const App = () => {
+  const [createType, setCreateType] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   if (!authToken) {
     return <Auth />;
   }
+
   return (
     <div className="app__wrapper">
       <Chat client={client} theme="team light">
-        <ChannelList />
-        <Channel />
+        <ChannelList
+          isCreating={isCreating}
+          setIsCreating={setIsCreating}
+          setCreateType={setCreateType}
+          setIsEditing={setIsEditing}
+        />
+        <ChannelContainer
+          isCreating={isCreating}
+          isEditing={isEditing}
+          setIsCreating={setIsCreating}
+          setIsEditing={setIsEditing}
+          createType={createType}
+        />
       </Chat>
     </div>
   );
