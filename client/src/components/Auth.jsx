@@ -11,6 +11,8 @@ const initialState = {
   avatarURL: "",
 };
 
+const cookies = new Cookies();
+
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [form, setForm] = useState(initialState);
@@ -18,8 +20,32 @@ const Auth = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const { fullName, userName, password, phoneNumber, avatarURL } = form;
+    const URL = "http://localhost:5000/auth";
+
+    const {
+      data: { token, userId, hashedPassword },
+    } = await axios.post(`${URL}/${isSignUp ? "signup" : "login"}`, {
+      userName,
+      password,
+      fullName,
+      phoneNumber,
+      avatarURL,
+    });
+
+    cookies.set("token", token);
+    cookies.set("userName", userName);
+    cookies.set("fullName", fullName);
+    cookies.set("userId", userId);
+
+    if (isSignUp) {
+      cookies.set("phoneNumber", phoneNumber);
+      cookies.set("avatarURL", avatarURL);
+      cookies.set("hashedPassword", hashedPassword);
+    }
+    window.location.reload();
   };
   const switchMode = () => {
     setIsSignUp((previousIsSignUp) => !previousIsSignUp);

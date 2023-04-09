@@ -11,7 +11,23 @@ import "./App.css";
 const apiKey = import.meta.env.VITE_API_KEY;
 
 const client = StreamChat.getInstance(apiKey);
-const authToken = false;
+
+const cookies = new Cookies();
+const authToken = cookies.get("token", cookies.get("token"));
+
+if (authToken) {
+  client.connectUser(
+    {
+      name: cookies.get("userName"),
+      fullName: cookies.get("fullName"),
+      id: cookies.get("userId"),
+      phoneNumber: cookies.get("phoneNumber"),
+      image: cookies.get("avatarURL"),
+      hashedPassword: cookies.get("hashedPassword"),
+    },
+    authToken
+  );
+}
 
 const App = () => {
   if (!authToken) {
